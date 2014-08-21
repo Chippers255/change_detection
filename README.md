@@ -6,7 +6,6 @@ This script runs a standard color change detection task (modeled after Luck & Vo
 
 - [PsychoPy](http://www.psychopy.org/)
 - [Python](http://www.python.org/)
-- 
 
 ## Documentation
 
