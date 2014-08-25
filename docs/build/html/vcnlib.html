@@ -1,0 +1,407 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>vcnlib package &mdash; Change Detection 1.0.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Change Detection 1.0.0 documentation" href="index.html" />
+    <link rel="prev" title="change_detection module" href="change_detection.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="change_detection.html" title="change_detection module"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Change Detection 1.0.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="vcnlib-package">
+<h1>vcnlib package<a class="headerlink" href="#vcnlib-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-vcnlib.standard_trial">
+<span id="vcnlib-standard-trial-module"></span><h2>vcnlib.standard_trial module<a class="headerlink" href="#module-vcnlib.standard_trial" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="vcnlib.standard_trial.Subject">
+<em class="property">class </em><tt class="descclassname">vcnlib.standard_trial.</tt><tt class="descname">Subject</tt><big>(</big><em>expName=''</em>, <em>subjNum=999</em>, <em>subjAge=0</em>, <em>subjSex=''</em>, <em>subjHand=''</em><big>)</big><a class="reference internal" href="_modules/vcnlib/standard_trial.html#Subject"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vcnlib.standard_trial.Subject" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class consists of all collective information regarding test
+subjects for the experiment.</p>
+<dl class="method">
+<dt id="vcnlib.standard_trial.Subject.getFileName">
+<tt class="descname">getFileName</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/vcnlib/standard_trial.html#Subject.getFileName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vcnlib.standard_trial.Subject.getFileName" title="Permalink to this definition">¶</a></dt>
+<dd><p>This public function is used to get the subject file name.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The subject file name.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="vcnlib.standard_trial.Subject.getSubject">
+<tt class="descname">getSubject</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/vcnlib/standard_trial.html#Subject.getSubject"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vcnlib.standard_trial.Subject.getSubject" title="Permalink to this definition">¶</a></dt>
+<dd><p>This public function is used to get the subject number.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The subject number.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="vcnlib.standard_trial.Subject.getsubjAge">
+<tt class="descname">getsubjAge</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/vcnlib/standard_trial.html#Subject.getsubjAge"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vcnlib.standard_trial.Subject.getsubjAge" title="Permalink to this definition">¶</a></dt>
+<dd><p>This public function is used to get the subject age.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The subject age.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="vcnlib.standard_trial.Subject.getsubjHand">
+<tt class="descname">getsubjHand</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/vcnlib/standard_trial.html#Subject.getsubjHand"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vcnlib.standard_trial.Subject.getsubjHand" title="Permalink to this definition">¶</a></dt>
+<dd><p>This public function is used to get the subject handedness.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The subject handedness.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="vcnlib.standard_trial.Subject.getsubjNotes">
+<tt class="descname">getsubjNotes</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/vcnlib/standard_trial.html#Subject.getsubjNotes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vcnlib.standard_trial.Subject.getsubjNotes" title="Permalink to this definition">¶</a></dt>
+<dd><p>This public function is used to get the subject notes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The subject notes.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="vcnlib.standard_trial.Subject.getsubjSex">
+<tt class="descname">getsubjSex</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/vcnlib/standard_trial.html#Subject.getsubjSex"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vcnlib.standard_trial.Subject.getsubjSex" title="Permalink to this definition">¶</a></dt>
+<dd><p>This public function is used to get the subject gender.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The subject gender.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-vcnlib.subject">
+<span id="vcnlib-subject-module"></span><h2>vcnlib.subject module<a class="headerlink" href="#module-vcnlib.subject" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="vcnlib.subject.Subject">
+<em class="property">class </em><tt class="descclassname">vcnlib.subject.</tt><tt class="descname">Subject</tt><big>(</big><em>expName=''</em>, <em>subjNum=999</em>, <em>subjAge=0</em>, <em>subjSex=''</em>, <em>subjHand=''</em><big>)</big><a class="reference internal" href="_modules/vcnlib/subject.html#Subject"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vcnlib.subject.Subject" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class consists of all collective information regarding test
+subjects for the experiment.</p>
+<dl class="method">
+<dt id="vcnlib.subject.Subject.getFileName">
+<tt class="descname">getFileName</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/vcnlib/subject.html#Subject.getFileName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vcnlib.subject.Subject.getFileName" title="Permalink to this definition">¶</a></dt>
+<dd><p>This public function is used to get the subject file name.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The subject file name.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="vcnlib.subject.Subject.getSubject">
+<tt class="descname">getSubject</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/vcnlib/subject.html#Subject.getSubject"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vcnlib.subject.Subject.getSubject" title="Permalink to this definition">¶</a></dt>
+<dd><p>This public function is used to get the subject number.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The subject number.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="vcnlib.subject.Subject.getsubjAge">
+<tt class="descname">getsubjAge</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/vcnlib/subject.html#Subject.getsubjAge"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vcnlib.subject.Subject.getsubjAge" title="Permalink to this definition">¶</a></dt>
+<dd><p>This public function is used to get the subject age.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The subject age.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="vcnlib.subject.Subject.getsubjHand">
+<tt class="descname">getsubjHand</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/vcnlib/subject.html#Subject.getsubjHand"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vcnlib.subject.Subject.getsubjHand" title="Permalink to this definition">¶</a></dt>
+<dd><p>This public function is used to get the subject handedness.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The subject handedness.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="vcnlib.subject.Subject.getsubjNotes">
+<tt class="descname">getsubjNotes</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/vcnlib/subject.html#Subject.getsubjNotes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vcnlib.subject.Subject.getsubjNotes" title="Permalink to this definition">¶</a></dt>
+<dd><p>This public function is used to get the subject notes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The subject notes.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="vcnlib.subject.Subject.getsubjSex">
+<tt class="descname">getsubjSex</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/vcnlib/subject.html#Subject.getsubjSex"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vcnlib.subject.Subject.getsubjSex" title="Permalink to this definition">¶</a></dt>
+<dd><p>This public function is used to get the subject gender.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The subject gender.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-vcnlib.trial">
+<span id="vcnlib-trial-module"></span><h2>vcnlib.trial module<a class="headerlink" href="#module-vcnlib.trial" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="vcnlib.trial.Subject">
+<em class="property">class </em><tt class="descclassname">vcnlib.trial.</tt><tt class="descname">Subject</tt><big>(</big><em>expName=''</em>, <em>subjNum=999</em>, <em>subjAge=0</em>, <em>subjSex=''</em>, <em>subjHand=''</em><big>)</big><a class="reference internal" href="_modules/vcnlib/trial.html#Subject"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vcnlib.trial.Subject" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class consists of all collective information regarding test
+subjects for the experiment.</p>
+<dl class="method">
+<dt id="vcnlib.trial.Subject.getFileName">
+<tt class="descname">getFileName</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/vcnlib/trial.html#Subject.getFileName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vcnlib.trial.Subject.getFileName" title="Permalink to this definition">¶</a></dt>
+<dd><p>This public function is used to get the subject file name.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The subject file name.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="vcnlib.trial.Subject.getSubject">
+<tt class="descname">getSubject</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/vcnlib/trial.html#Subject.getSubject"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vcnlib.trial.Subject.getSubject" title="Permalink to this definition">¶</a></dt>
+<dd><p>This public function is used to get the subject number.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The subject number.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="vcnlib.trial.Subject.getsubjAge">
+<tt class="descname">getsubjAge</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/vcnlib/trial.html#Subject.getsubjAge"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vcnlib.trial.Subject.getsubjAge" title="Permalink to this definition">¶</a></dt>
+<dd><p>This public function is used to get the subject age.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The subject age.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="vcnlib.trial.Subject.getsubjHand">
+<tt class="descname">getsubjHand</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/vcnlib/trial.html#Subject.getsubjHand"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vcnlib.trial.Subject.getsubjHand" title="Permalink to this definition">¶</a></dt>
+<dd><p>This public function is used to get the subject handedness.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The subject handedness.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="vcnlib.trial.Subject.getsubjNotes">
+<tt class="descname">getsubjNotes</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/vcnlib/trial.html#Subject.getsubjNotes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vcnlib.trial.Subject.getsubjNotes" title="Permalink to this definition">¶</a></dt>
+<dd><p>This public function is used to get the subject notes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The subject notes.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="vcnlib.trial.Subject.getsubjSex">
+<tt class="descname">getsubjSex</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/vcnlib/trial.html#Subject.getsubjSex"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vcnlib.trial.Subject.getsubjSex" title="Permalink to this definition">¶</a></dt>
+<dd><p>This public function is used to get the subject gender.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The subject gender.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-vcnlib">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-vcnlib" title="Permalink to this headline">¶</a></h2>
+<p>A library of classes to use to build a change detection experiment.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">vcnlib package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-vcnlib.standard_trial">vcnlib.standard_trial module</a></li>
+<li><a class="reference internal" href="#module-vcnlib.subject">vcnlib.subject module</a></li>
+<li><a class="reference internal" href="#module-vcnlib.trial">vcnlib.trial module</a></li>
+<li><a class="reference internal" href="#module-vcnlib">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="change_detection.html"
+                        title="previous chapter">change_detection module</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/vcnlib.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="change_detection.html" title="change_detection module"
+             >previous</a> |</li>
+        <li><a href="index.html">Change Detection 1.0.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Thomas Nelson.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>
