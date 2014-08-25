@@ -9,7 +9,7 @@
 # This library was developed for use by the Visual Cognitive
 # Neuroscience Lab at Brock University.
 
-"""A set of color change detection tasks.
+"""A library of classes to use to build a change detection experiment.
 
 """
 
@@ -27,4 +27,4 @@ __all__ = ['trial', 'standard_trial', 'subject']
 # Deprecated to keep older scripts who import this from breaking
 from trial import *
 from standard_trial import *
-from subject import *change-detection
+from subject import *
