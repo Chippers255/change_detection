@@ -22,9 +22,8 @@ __url__='http://www.tnelson.ca/change-detection'
 __downloadUrl__='https://github.com/Chippers255/change-detection'
 
 # Import all files and functions into the module
-__all__ = ['trial', 'standard_trial', 'subject']
+__all__ = ['standard_trial', 'subject']
 
 # Deprecated to keep older scripts who import this from breaking
-from trial import *
-from standard_trial import *
 from subject import *
+from standard_trial import *
