@@ -10,6 +10,9 @@
 # This library was developed for use by the Visual Cognitive
 # Neuroscience Lab at Brock University.
 
+import random
+import math
+
 class Standard_Trial(object):
     """The standard trial class represents a single trial in a standard change
     detection task. This class is used to set up and run a trial.
@@ -41,14 +44,6 @@ class Standard_Trial(object):
             self.numTargets = 6
     # end def __init__
 
-   # This function will determine the location (left or right) for the memory
-   # sample and distraction sample. Uses even and odd numbers to ensure an even
-   # distribution of left and right positioning. Also generates the coordinates
-   # for the gui and results print out.
-   #
-   # @param self   This is is a default python argument
-   # @param rep    The rep number used to given an even distribution of locations
-   # @param radius The distance of the probe from the fixation point
     def setPositions(self, positionRadius=5, numPositions=12):
         """This function will determine the location (left or right) for the
         memory sample and distraction sample. Uses even and odd numbers to
@@ -65,6 +60,7 @@ class Standard_Trial(object):
         """
     
         random.seed() #initialize random number generator
+
         self.targetPositions = []
 
         for pos in range(0, numPositions):
@@ -76,23 +72,30 @@ class Standard_Trial(object):
         self.targetPositions = self.targetPositions[:self.numTargets]
     # end def setPositions
 
-   # This function is used to randomly generate memory sample colours and
-   # memory distraction colours based on a colour match or not.
-   #
-   # @param self This is is a default python argument
-   # @param rep  The rep number used to given an even distribution colours
-  def setColors(self, rep):
-    random.seed() #initialize random number generator
-    self.trialColors = [[-1,-1,-1],[-1,-1,1],[-1,1,-1],[-1,1,1],[1,-1,-1],[1,-1,1],[1,1,-1],[1,1,1]]
-    self.probeColor  = []
-    self.change = False
-    random.shuffle(self.trialColors)
-    for color in self.trialColors:
-      self.probeColor.append(color)
+    def setColors(self):
+        """This function is used to randomly generate memory sample colours and
+        memory distraction colours based on a colour match or not.
 
-    if (rep % 2) == 0:
-      self.change = True
-      self.probeColor[random.randint(0,self.numTargets-1)] = self.probeColor[random.randint(self.numTargets,7)]
+        """
 
-    self.trialColors = self.trialColors[:self.numTargets]
-    self.probeColor  = self.probeColor[:self.numTargets]
+        random.seed() #initialize random number generator
+
+        self.trialColors = [[-1,-1,-1],[-1,-1,1],[-1,1,-1],[-1,1,1],[1,-1,-1],
+                            [1,-1,1],[1,1,-1],[1,1,1]]
+        self.probeColor  = []
+        self.change      = False
+
+        random.shuffle(self.trialColors)
+
+        for color in self.trialColors:
+          self.probeColor.append(color)
+
+        if (repNum % 2) == 0:
+          self.change = True
+          self.probeColor[random.randint(0,self.numTargets-1)] = self.probeColor[random.randint(self.numTargets,7)]
+
+        self.trialColors = self.trialColors[:self.numTargets]
+        self.probeColor  = self.probeColor[:self.numTargets]
+    # end def setColors
+
+# end class Standard_Trial
