@@ -4,13 +4,14 @@
 # Visual Cognitive Neuroscience Lab
 # Brock University
 #
-# Created by Thomas Nelson on 2013-10-24
+# Created by Thomas Nelson <tn90ca@gmail.com>
+# Since 2013-10-24
 #
 # This library was developed for use by the Visual Cognitive
 # Neuroscience Lab at Brock University.
 
-class Subject:
-    """This class consists of all collective information regarding test
+class Subject(object):
+    """The Subject class consists of all collective information regarding test
     subjects for the experiment.
     
     """
