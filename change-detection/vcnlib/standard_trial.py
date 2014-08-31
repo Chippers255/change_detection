@@ -36,11 +36,11 @@ class Standard_Trial(object):
         self.repNum     = repNum
         self.numTargets = 0
 
-        if trial == 0:
+        if trialNum == 0:
             self.numTargets = 2
-        elif trial == 1:
+        elif trialNum == 1:
             self.numTargets = 4
-        elif trial == 2:
+        elif trialNum == 2:
             self.numTargets = 6
     # end def __init__
 
@@ -90,7 +90,7 @@ class Standard_Trial(object):
         for color in self.trialColors:
           self.probeColor.append(color)
 
-        if (repNum % 2) == 0:
+        if (self.repNum % 2) == 0:
           self.change = True
           self.probeColor[random.randint(0,self.numTargets-1)] = self.probeColor[random.randint(self.numTargets,7)]
 

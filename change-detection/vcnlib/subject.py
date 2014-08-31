@@ -16,7 +16,7 @@ class Subject(object):
     
     """
     
-    def __init__(self, expName="", subjNum=999, subjAge=0, subjSex='', subjHand=''):
+    def __init__(self, expName="", subjNum=999, subjAge=0, subjSex='', subjHand='', notes=''):
         """This is the default constructor function for the Subject class and is
         used to initialize the subject information.
         
