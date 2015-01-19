@@ -5,238 +5,404 @@
 # Brock University
 #
 # Created by Thomas Nelson <tn90ca@gmail.com>
-# Since 2013-10-24
+# Created on 2013-10-24
+# Modified by Thomas Nelson on 2015-01-19
 #
-# This library was developed for use by the Visual Cognitive
+# This script was developed for use by the Visual Cognitive
 # Neuroscience Lab at Brock University.
 
-"""This script runs a standard color change detection task (modeled after Luck & Vogel, 1997, Nature). The script was written by Thomas Nelson for the Visual Cognitive Neuroscience Lab at Brock University. Feel free to use this as a starting point for creating your own change detection experiments.
+"""This script runs a standard color change detection task (modeled after Luck
+& Vogel, 1997, Nature). The script was written by Thomas Nelson for the Visual
+Cognitive Neuroscience Lab at Brock University. Feel free to use this as a
+starting point for creating your own change detection experiments.
 
 """
 
 from psychopy import visual, core, data, event, logging, sound, gui, misc, monitors
 from psychopy.constants import *
-from vcnlib import Subject, Standard_Trial
 import os
-import vcnlib
-import random
+import csv
 import math
+import time
 import Image
 import ctypes
+import random
 
-########## Begin Program Constants ##########
-EXP_NAME          = "change_detection"
-MONITOR_NAME      = "vcnLab"
-NUM_REPS          = 50  # Number of reps for each trial type, there are 5 trial types
-NUM_TARGET_POS    = 12  # Number of postention positions that items can be placed into
-TARGET_POS_RADIUS = 4  # The distance between the fixation point to the the memory probes
-TARGET_SIZE       = 1   # The size of the target shape, this value is for both the length and width
-FIXATION_SIZE     = 0.1 # The radius of the fixation dot in degrees
-SAMPLE_LENGTH     = 0.5 # The length in seconds to display memory sample
-ITI_LENGTH        = 0.5 # Delay between emory sample and memory probe
-PROBE_LINE_WIDTH  = 2   # The thickness of the outline that inidicates the probed location
-DELAY_LENGTH      = 1.0 # The duration of time separating trials
-TEXT_HEIGHT       = 1   # Height of the instructions text
-TEXT_WRAPPING     = 50  # Wrapping width of the instructions text
-########## End Program Constants ##########
+###################################################################################################
+######################################## Program Constants ########################################
+###################################################################################################
+EXP_NAME     = "change_detection" # The name of the experiment for save files
+MONITOR_NAME = "vcnLab"           # The name of the monitor set in PsychoPy
+SAVE_PATH    = 'C:\\Users\\vcnlab\\Desktop\\data\\change_detection\\'
 
-########## Begin Display Text ##########
-insMsg   = "You will be presented with coloured squares, try to remember their colours.\n\nFor each, trial there will follow a second set of squares in the same locations.\n\nIf there was any change in colour to the second set of squares from the first, press the z key,\n\nIf they have not changed colour, press the m key\n\nPress any key when you are ready to begin.";
-errMsg   = "This subject number has already been used, please select another!";
-breakMsg = "Take a quick break. When you are ready to continue, press any key.";
-thankMsg = "Thank you for your participation. Please go find the experimenter.";
-########## End Display Text ##########
+BG_COLOR     = [0, 0, 0]    # Set a background color, currently grey
+FIX_COLOR    = [-1, -1, -1] # Set the fixation color, currently black
+TEXT_COLOR   = [1, 1, 1]    # The text color, currently white
+TRIAL_COLORS = [[-1,-1,-1], # Black
+                [-1,-1,1],  # Blue
+                [-1,1,-1],  # Green
+                [-1,1,1],   # Cyan
+                [1,-1,-1],  # Red
+                [1,-1,1],   # Purple
+                [1,1,-1],   # Yellow
+                [1,1,1]     # White
+               ]
 
-########## Begin Global Variables ##########
-user       = ''
-outputFile = ''
-hit        = 0
-miss       = 0
-fa         = 0
-cr         = 0
-########## End Global Variables ##########
+NUM_REPS = 50 # Number of reps for each trial type
+NUM_TYPE = 3  # Number of trial types, should be set to 3
 
-random.seed() # Initialize random number generator
+NUM_STIM_POS    = 12 # The number of positions for stimuli to be placed
+STIM_POS_RADIUS = 4  # Number of visual degrees between the center and stimuli
+STIM_SIZE       = 1  # Size of the stimuli in visual degrees, length and width
+STIM_THICKNESS  = 1  # The thickness of the outline of the stimuli
 
-########## Begin Subject Setup ##########
-E1 = gui.Dlg(title="Error!")
-E1.addText(errMsg)
+FIXATION_SIZE = 0.1 # Size of the fixation at the center of the screen
 
-while True:
-    S1Info = {'subjNum':''}
-    S1     = gui.DlgFromDict(dictionary=S1Info, title=EXP_NAME)
+TEXT_HEIGHT = 1  # The height in visual degrees of instruction text
+TEXT_WRAP   = 50 # The character limit of each line of text before word wrap
 
-    if S1.OK == False:
-        core.quit()
+ITI        = 0.5  # The time in seconds between trials
+STIM_TIME  = 0.5  # The time in seconds to display the stimuli
+DELAY_TIME = 1.0  # The time in seconds between stimuli and probe
+BREAK_TIME = 0.75 # The time in seconds between break end and trial start
 
-    if S1Info['subjNum'].isdigit():
-        fileName = 'C:\\Users\\vcnlab\\Desktop\\data\\change_detection\\' + EXP_NAME + '_' + S1Info['subjNum'] + '.csv'
+INS_MSG   = "You will be presented with coloured squares, try to remember their colours.\n\n"
+INS_MSG  += "For each, trial there will follow a second set of squares in the same locations.\n\n"
+INS_MSG  += "If there was any change in colour to the second set of squares from the first, press "
+INS_MSG  += "the z key,\n\nIf they have not changed colour, press the m key\n\nPress any key when "
+INS_MSG  += "you are ready to begin."
+BREAK_MSG = "Take a quick break. When you are ready to continue, press any key."
+THANK_MSG = "Thank you for your participation. Please go find the experimenter."
 
-        if int(S1Info['subjNum']) == 999: 
-            break
+HEADER_LIST = ['Subject_Number', 'Trial_Number', 'Number_of_Stim', 'Stim_Color_1',
+               'Stim_Color_2', 'Stim_Color_3', 'Stim_Color_4', 'Stim_Color_5', 'Stim_Color_6',
+               'Probe_Color_1', 'Probe_Color_2', 'Probe_Color_3', 'Probe_Color_4',
+               'Probe_Color_5', 'Probe_Color_6', 'Change_Present', 'Subject_Response',
+               'Response_Time', 'Response_Error'
+              ]
 
-        if not os.path.isfile(fileName): 
-            break
-        else:
-            E1.show()
 
-user = Subject(EXP_NAME, S1Info['subjNum'])
+###################################################################################################
+######################################## Class Declaration ########################################
+###################################################################################################
+class Trial(object):
+    """The standard trial class represents a single trial in a standard change
+    detection task. This class is used to set up and run a trial.
+    
+    """
+    
+    def __init__(self, trial_num=0, rep_num=0):
+        """Class constructor function initializes which trial format to follow
+        from parameter input, also calls the functions to set the memory trial
+        colour and location.
+        
+        :param trial_num: The trial number used to determine the trial format.
+        :param rep_num:   The rep number of this trial, used to determine color
+                          change.
+        
+        """
+        
+        self.trial_num   = trial_num
+        self.rep_num     = rep_num
+        self.num_stimuli = 0
 
-if int(user.getSubject()) == 999:
-    NUM_REPS = 6
+        if trialNum == 0:
+            self.num_stimuli = 2
+        elif trialNum == 1:
+            self.num_stimuli = 4
+        elif trialNum == 2:
+            self.num_Stimuli = 6
+    # end def __init__
 
-outputFile = open(fileName, 'w')
-########## End Subject Setup ##########
+    def set_positions(self, position_radius, num_positions):
+        """This function will determine the location (left or right) for the
+        memory sample and distraction sample. Uses even and odd numbers to
+        ensure an even distribution of left and right positioning. Also
+        generates the coordinates for the gui and results print out.
+        
+        :param position_radius: The distance from the squares to the fixation
+                                 point.
+        :param num_positions:   The number of positions around the fixations
+                                 for the squares to appear.
+    
+        """
+    
+        random.seed(time.time()) # Initialize random number generator
 
-########## Start Column Setup ##########
-outStr = "user,trial,setSize,changePresent,response,responseTime"
-outputFile.write(outStr + "\n")
-########## End Column Setup ##########
+        self.stim_positions =
 
-########## Start PsychoPy Setup ##########
-win        = visual.Window(fullscr=True, screen=0, allowGUI=False, allowStencil=False, monitor=MONITOR_NAME, color=[0,0,0], colorSpace='rgb', units='deg')
-mon        = monitors.Monitor(MONITOR_NAME)
-trialClock = core.Clock()
-eventClock = core.Clock()
-keyResp    = event.BuilderKeyResponse()  # create an object of type KeyResponse
-mouse      = event.Mouse(win=win)
-errorTone  = sound.SoundPygame(500,0.05)
-fixation   = visual.Circle(win, pos=(0,0), radius=(FIXATION_SIZE), lineColor='black', fillColor='black')
-########## End PsychoPy Setup ##########
+        for pos in xrange(num_positions):
+            angle = math.radians(360 / num_positions * pos)
+            self.stim_positions.append([math.cos(angle)*position_radius,
+                                        math.sin(angle)*position_radius])
 
-########## Build Trial Set ##########
-testSet = []
-for rep in range(0, NUM_REPS):
-    for trial in range(3):
-        setTrial = Standard_Trial(trial,rep)
-        setTrial.setPositions(TARGET_POS_RADIUS,NUM_TARGET_POS)
-        setTrial.setColors()
-        testSet.append(setTrial)
-random.shuffle(testSet)
-########## Build Trial Set ##########
+        random.shuffle(self.stim_positions)
+        self.stim_positions = self.stim_positions[:self.num_stimuli]
+    # end def set_positions
+
+    def set_colors(self):
+        """This function is used to randomly generate memory sample colours and
+        memory distraction colours based on a colour match or not.
+
+        """
+
+        random.seed(time.time()) #initialize random number generator
+        self.stim_colors  = []
+        self.probe_colors = []
+        self.change       = False
+
+        random.shuffle(self.stim_colors)
+
+        for color in TRIAL_COLORS:
+            self.stim_colors.append(color)
+            self.probe_colors.append(color)
+
+        if (self.rep_num % 2) == 0:
+            self.change = True
+            self.probe_colors[random.randint(0,self.num_stimuli-1)] = self.probe_color[random.randint(self.num_stimuli,7)]
+
+        self.stim_colors  = self.trialColors[:self.num_stimuli]
+        self.probe_colors = self.probeColor[:self.num_stimuli]
+    # end def set_colors
+
+# end class Standard_Trial
+
+
+###################################################################################################
+####################################### Function Declaration ######################################
+###################################################################################################
+def setup_subject():
+    global NUM_REPS
+    
+    subj_error = gui.Dlg(title="Error!")
+    subj_error.addText("This subject number has already been used, please select another!")
+
+    while True:
+        subj_info = {'Subject Number':''}
+        subj_dlg  = gui.DlgFromDict(dictionary=subj_info, title=EXP_NAME)
+    
+        if subj_dlg.OK == False:
+            core.quit(0) # If used hits cancel then safely close program
+    
+        if subj_info['Subject Number'].isdigit():
+            subj_file  = SAVE_PATH + EXP_NAME + '_' + subj_info['Subject Number'] + '.csv'
+    
+            if int(subj_info['Subject Number']) == 999:
+                break
+    
+            if not os.path.isfile(fileName):
+                break
+            else:
+                subj_error.show()
+    
+    user_dict = {'subj_num' : subj_info['Subject Number'], 'subj_file' : subj_file}
+    
+    if int(user.getSubject()) == 999:
+        NUM_REPS = 6
+        
+    return user_dict
+# end def setup_subject
+
+
+###################################################################################################
+######################################## Experiment Setup #########################################
+###################################################################################################
+# Seed random with time so each experiment is different
+random.seed(time.time())
+
+# Setup subject with number and save file
+subject = setup_subject()
+subj_file = subject['subj_file']
+subj_num  = subject['subj_num']
+
+# Write output headers to subject save file
+with open(subj_file, 'a') as csv_file:
+    writer = csv.writer(csv_file)
+    writer.writerow(HEADER_LIST)
+
+# Setup all required PsychoPY variables
+win         = visual.Window(fullscr=True, screen=0, allowGUI=False, allowStencil=False,
+                            monitor=MONITOR_NAME, color=BG_COLOR, colorSpace='rgb', units='deg'
+                           )
+mon         = monitors.Monitor(MONITOR_NAME)
+event_clock = core.Clock()
+key_resp    = event.BuilderKeyResponse()
+error_tone  = sound.SoundPygame(500,0.05)
+
+# Build all trials before we start experiment
+test_set = []
+
+for rep in xrange(NUM_REPS):
+    for trial in xrange(NUM_TYPE):
+        set_trial = Trial(trial, rep)
+        set_trial.set_positions(STIM_POS_RADIUS, NUM_STIM_POS)
+        set_trial.set_colors()
+        test_set.append(set_trial)
+
+random.shuffle(test_Set) # Randomize our trial order
+
+# Build all experiment stimuli
+instructions = visual.TextStim(win=win, ori=0, name='text', text="", font='Arial', pos=[0, 0],
+                               height=TEXT_HEIGHT, wrapWidth=TEXT_WRAPPING, color=TEXT_COLOR,
+                               colorSpace='rgb', opacity=1, depth=-1.0
+                              )
+fixation = visual.Circle(win, pos=[0, 0], radius=FIXATION_SIZE, lineColor=FIX_COLOR,
+                         fillColor=FIX_COLOR
+                        )
+simuli = []
+for target in xrange(6):
+    stimuli.append(visual.Rect(win, width=STIM_SIZE, height=STIM_SIZE, fillColorSpace='rgb',
+                               lineColorSpace='rgb'
+                              )
+                  )
 
 # Present instructions for the experiment
 fixation.setAutoDraw(False)
-instructions = visual.TextStim(win=win, ori=0, name='text', text="", font=u'Arial', pos=[0, 0], height=TEXT_HEIGHT, wrapWidth=TEXT_WRAPPING, color=u'black', colorSpace=u'rgb', opacity=1, depth=-1.0)
-instructions.setText(insMsg)
-instructions.setAutoDraw(True); win.flip(); event.waitKeys(); instructions.setAutoDraw(False); win.flip()
+instructions.setText(INS_MSG)
+instructions.setAutoDraw(True)
+win.flip()
+event.waitKeys()
+instructions.setAutoDraw(False)
 fixation.setAutoDraw(True)
+win.flip()
 
-# Begin the experiment
-currentTrial = 0
-for trial in testSet: 
-    currentTrial += 1
+# Open the output file reader for writing
+csv_file = open(subj_file, 'a')
+writer   = csv.writer(csv_file)
 
-    # Present a break message every 25 trials; any key to skip
-    if currentTrial % 25 == 0 and currentTrial != 0:
-        instructions = visual.TextStim(win=win, ori=0, name='text', text=breakMsg, font=u'Arial', pos=[0, 0], height=TEXT_HEIGHT, wrapWidth=TEXT_WRAPPING, color=u'black', colorSpace=u'rgb', opacity=1, depth=-1.0)
+
+###################################################################################################
+####################################### Experiment Runtime ########################################
+###################################################################################################
+current_trial = 0
+
+for trial in test_set:
+    current_trial += 1
+
+    # Present a break message every 25 trials
+    if current_trial % 25 == 0 and currentTrial != 0:
         fixation.setAutoDraw(False)
+        instructions.setText(BREAK_MSG)
         instructions.setAutoDraw(True)
         win.flip()
         event.waitKeys()
         instructions.setAutoDraw(False)
-        win.flip()
-
         fixation.setAutoDraw(True)
+        win.flip()
         eventClock.reset()
-        while eventClock.getTime < 0.75: 
+        while eventClock.getTime < BREAK_TIME:
             pass
-        
-    # Setup target stimuli for late use
-    targetStim = []
-    for target in range(trial.numTargets):
-        targetStim.append(visual.Rect(win, width=TARGET_SIZE, height=TARGET_SIZE, fillColor=trial.trialColors[target], pos=trial.targetPositions[target], fillColorSpace='rgb', lineColor=trial.trialColors[target], lineColorSpace='rgb'))
-
-    mouse.setVisible(0)
 
     # Present ITI, just fixation
-    fixation.setAutoDraw(True)
-    win.flip()
     eventClock.reset()
-    while eventClock.getTime() < ITI_LENGTH: 
+    while eventClock.getTime() < ITI:
         pass
     
-    # Present memory sample
-    for target in range(trial.numTargets):
-        targetStim[target].setAutoDraw(True)
+    # Present stimuli to screen
+    for target in xrange(trial.num_stimuli):
+        stimuli[target].setPos((trial.stim_positions[target][0], trial.stim_positions[target][1]))
+        stimuli[target].setFillColor(trial.stim_color[target])
+        stimuli[target].setLineColor(trial.stim_color[target])
+        stimuli[target].setAutoDraw(True)
     win.flip()
     eventClock.reset()
-    while eventClock.getTime() < SAMPLE_LENGTH: 
+    while eventClock.getTime() < STIM_TIME:
         pass
 
-    # Present memory delay    
-    for target in range(trial.numTargets):
-        targetStim[target].setAutoDraw(False)
+    # Present memory delay
+    for target in xrange(trial.num_stimuli):
+        stimuli[target].setAutoDraw(False)
     win.flip()
     eventClock.reset()
-    while eventClock.getTime() < DELAY_LENGTH: 
+    while eventClock.getTime() < DELAY_TIME:
         pass
 
-    # Present memory test sample
-    for target in range(trial.numTargets):
-        targetStim[target].setFillColor(trial.probeColor[target])
-        targetStim[target].setLineColor(trial.probeColor[target])
-        targetStim[target].setPos((trial.targetPositions[target][0], trial.targetPositions[target][1]))
-        targetStim[target].setAutoDraw(True)
+    # Present probes to screen
+    for target in xrange(trial.num_stimuli):
+        stimuli[target].setFillColor(trial.probe_color[target])
+        stimuli[target].setLineColor(trial.probe_color[target])
+        stimuli[target].setPos((trial.stim_positions[target][0], trial.stim_positions[target][1]))
+        stimuli[target].setAutoDraw(True)
     win.flip()
     
     # Wait for key response and record
-    eventClock.reset()
-    keyResp.status = NOT_STARTED
+    event_clock.reset()
+    start           = event_clock.getTime()
+    key_resp.status = NOT_STARTED
 
     while True:
-        t = eventClock.getTime()
 
-        #initialize key checker
-        if keyResp.status == NOT_STARTED:
-            keyResp.tStart = t
-            keyResp.status = STARTED
-            keyResp.clock.reset()
+        # Initialize response key checker
+        if key_resp.status == NOT_STARTED:
+            key_resp.tStart = start
+            key_resp.status = STARTED
+            key_resp.clock.reset()
             event.clearEvents()
 
         # Check for response keys or quit
         if event.getKeys(["z"]):
-            response = 'y'
-            keyResp.rt = keyResp.clock.getTime()
-            if trial.change:
-                hit += 1
-            else:
-                fa += 1
+            response = True
+            key_resp.rt = key_resp.clock.getTime()
             break
         elif event.getKeys(["m"]):
-            response = 'n'
-            keyResp.rt = keyResp.clock.getTime()
-            if trial.change:
-                miss += 1
-            else:
-                cr += 1
+            response = False
+            key_resp.rt = key_resp.clock.getTime()
             break
         elif event.getKeys(["escape"]):
-            core.quit()
+            core.quit(0) # If escape key is hit then safely close program
 
     # Output trial results to file
-    outStr =  str(user.getSubject()) + ','
-    outStr += str(currentTrial) + ','
-    outStr += str(trial.numTargets) + ','
-    outStr += str(trial.change) + ','
-    outStr += str(response) + ','
-    outStr += str(keyResp.rt)
-
-    outputFile.write(outStr + '\n')
+    output = []
+    output.append(subj_num)
+    output.append(current_trial)
+    output.append(num_stimuli)
     
-    # Clear display at end of trial 
-    for target in range(0, trial.numTargets):
-        targetStim[target].setAutoDraw(False)
-        fixation.setAutoDraw(False)
-
+    for target in xrange(trial.num_stimuli):
+        output.append(trial.stim_color[target])
+    
+    if trial.num_stimuli < 6:
+        output.append('NaN')
+        output.append('NaN')
+        
+    if trial.num_stimuli < 4:
+        output.append('NaN')
+        output.append('NaN')
+    
+    for target in xrange(trial.num_stimuli):
+        output.append(trial.probe_color[target])
+    
+    if trial.num_stimuli < 6:
+        output.append('NaN')
+        output.append('NaN')
+        
+    if trial.num_stimuli < 4:
+        output.append('NaN')
+        output.append('NaN')
+        
+    output.append(trial.change)
+    output.append(response)
+    output.append(keyResp.rt)
+    
+        
+    writer.writerow(output)
+    csv_file.flush()
+    
+    # Clear display at end of trial
+    for target in xrange(trial.num_stimulio):
+        stimuli[target].setAutoDraw(False)
+    win.flip()
 # end of experiment
 
-outputFile.write("Hit: " + str(hit) + ", Miss: " + str(miss) + ", False Alarm: " + str(fa) + ", Correct Rejection: " + str(cr) + ", Trials: " + str(currentTrial) + "\n")
-outputFile.close()
+# Close the csv file
+csv_file.close()
 
 # Thank subject
-instructions = visual.TextStim(win=win, ori=0, name='text', text=thankMsg, font=u'Arial', pos=[0, 0], height=TEXT_HEIGHT, wrapWidth=TEXT_WRAPPING, color=u'black', colorSpace=u'rgb', opacity=1, depth=-1.0)
-instructions.setAutoDraw(True); win.flip(); event.waitKeys(); instructions.setAutoDraw(False); win.flip()
+fixation.setAutoDraw(False)
+instructions.setText(THANK_MSG)
+instructions.setAutoDraw(True)
+win.flip()
+event.waitKeys()
 
+# Close the experiment
 win.close()
 core.quit()
