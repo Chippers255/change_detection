@@ -6,7 +6,7 @@
 #
 # Created by Thomas Nelson <tn90ca@gmail.com>
 # Created on 2013-10-24
-# Modified by Thomas Nelson on 2015-01-19
+# Modified by Thomas Nelson on 2015-01-24
 #
 # This script was developed for use by the Visual Cognitive
 # Neuroscience Lab at Brock University.
@@ -123,7 +123,7 @@ class Trial(object):
             self.num_stimuli = 6
     # end def __init__
 
-    def set_positions(self, position_radius, num_positions):
+    def set_positions(self, positions):
         """This function will determine the location (left or right) for the
         memory sample and distraction sample. Uses even and odd numbers to
         ensure an even distribution of left and right positioning. Also
@@ -140,11 +140,9 @@ class Trial(object):
 
         self.stim_positions = []
 
-        for pos in xrange(num_positions):
-            angle = math.radians(360 / num_positions * pos)
-            self.stim_positions.append([math.cos(angle)*position_radius,
-                                        math.sin(angle)*position_radius])
-
+        for pos in positions:
+            self.stim_positions.append(pos)
+            
         random.shuffle(self.stim_positions)
         self.stim_positions = self.stim_positions[:self.num_stimuli]
     # end def set_positions
@@ -238,13 +236,19 @@ event_clock = core.Clock()
 key_resp    = event.BuilderKeyResponse()
 error_tone  = sound.SoundPygame(500,0.05)
 
+# Setup all stimuli positiona
+positions = []
+for pos in xrange(NUM_STIM_POS):
+    angle = math.radians(360 / NUM_STIM_POS * pos)
+    positions.append([math.cos(angle)*STIM_POS_RADIUS,math.sin(angle)*STIM_POS_RADIUS])
+
 # Build all trials before we start experiment
 test_set = []
 
 for rep in xrange(NUM_REPS):
     for trial in xrange(NUM_TYPE):
         set_trial = Trial(trial, rep)
-        set_trial.set_positions(STIM_POS_RADIUS, NUM_STIM_POS)
+        set_trial.set_positions(positions)
         set_trial.set_colors()
         test_set.append(set_trial)
 

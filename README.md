@@ -13,8 +13,11 @@ All documentation can be found [here]().
 
 ## Version Log
 
-### V-1.0.0 (Master)
+### V-1.1 (Master)
+- Code has been cleaned up
+- Improved runtime efficiency
 
+### V-1.0
 - Initial version
 
 ## License
