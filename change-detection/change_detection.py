@@ -32,7 +32,7 @@ import random
 ######################################## Program Constants ########################################
 ###################################################################################################
 EXP_NAME     = "change_detection" # The name of the experiment for save files
-MONITOR_NAME = "vcnLab"           # The name of the monitor set in PsychoPy
+MONITOR_NAME = "vcnlab"           # The name of the monitor set in PsychoPy
 SAVE_PATH    = 'C:\\Users\\vcnlab\\Desktop\\data\\change_detection\\'
 
 BG_COLOR     = [0, 0, 0]    # Set a background color, currently grey
@@ -47,6 +47,15 @@ TRIAL_COLORS = [[-1,-1,-1], # Black
                 [1,1,-1],   # Yellow
                 [1,1,1]     # White
                ]
+COLOR_NAMES  = {str([-1,-1,-1]):'Black',
+                str([-1,-1,1]):'Blue',
+                str([-1,1,-1]):'Green',
+                str([-1,1,1]):'Cyan',
+                str([1,-1,-1]):'Red',
+                str([1,-1,1]):'Purple',
+                str([1,1,-1]):'Yellow',
+                str([1,1,1]):'White'
+               }
 
 NUM_REPS = 50 # Number of reps for each trial type
 NUM_TYPE = 3  # Number of trial types, should be set to 3
@@ -91,7 +100,7 @@ class Trial(object):
     
     """
     
-    def __init__(self, trial_num=0, rep_num=0):
+    def __init__(self, trial_num, rep_num):
         """Class constructor function initializes which trial format to follow
         from parameter input, also calls the functions to set the memory trial
         colour and location.
@@ -106,12 +115,12 @@ class Trial(object):
         self.rep_num     = rep_num
         self.num_stimuli = 0
 
-        if trialNum == 0:
+        if trial_num == 0:
             self.num_stimuli = 2
-        elif trialNum == 1:
+        elif trial_num == 1:
             self.num_stimuli = 4
-        elif trialNum == 2:
-            self.num_Stimuli = 6
+        elif trial_num == 2:
+            self.num_stimuli = 6
     # end def __init__
 
     def set_positions(self, position_radius, num_positions):
@@ -129,7 +138,7 @@ class Trial(object):
     
         random.seed(time.time()) # Initialize random number generator
 
-        self.stim_positions =
+        self.stim_positions = []
 
         for pos in xrange(num_positions):
             angle = math.radians(360 / num_positions * pos)
@@ -151,18 +160,18 @@ class Trial(object):
         self.probe_colors = []
         self.change       = False
 
-        random.shuffle(self.stim_colors)
+        random.shuffle(TRIAL_COLORS)
 
         for color in TRIAL_COLORS:
             self.stim_colors.append(color)
             self.probe_colors.append(color)
-
+        
         if (self.rep_num % 2) == 0:
             self.change = True
-            self.probe_colors[random.randint(0,self.num_stimuli-1)] = self.probe_color[random.randint(self.num_stimuli,7)]
+            self.probe_colors[random.randint(0,self.num_stimuli-1)] = self.probe_colors[random.randint(self.num_stimuli,7)]
 
-        self.stim_colors  = self.trialColors[:self.num_stimuli]
-        self.probe_colors = self.probeColor[:self.num_stimuli]
+        self.stim_colors  = self.stim_colors[:self.num_stimuli]
+        self.probe_colors = self.probe_colors[:self.num_stimuli]
     # end def set_colors
 
 # end class Standard_Trial
@@ -197,7 +206,7 @@ def setup_subject():
     
     user_dict = {'subj_num' : subj_info['Subject Number'], 'subj_file' : subj_file}
     
-    if int(user.getSubject()) == 999:
+    if int(subj_info['Subject Number']) == 999:
         NUM_REPS = 6
         
     return user_dict
@@ -216,7 +225,7 @@ subj_file = subject['subj_file']
 subj_num  = subject['subj_num']
 
 # Write output headers to subject save file
-with open(subj_file, 'a') as csv_file:
+with open(subj_file, 'w') as csv_file:
     writer = csv.writer(csv_file)
     writer.writerow(HEADER_LIST)
 
@@ -239,17 +248,17 @@ for rep in xrange(NUM_REPS):
         set_trial.set_colors()
         test_set.append(set_trial)
 
-random.shuffle(test_Set) # Randomize our trial order
+random.shuffle(test_set) # Randomize our trial order
 
 # Build all experiment stimuli
 instructions = visual.TextStim(win=win, ori=0, name='text', text="", font='Arial', pos=[0, 0],
-                               height=TEXT_HEIGHT, wrapWidth=TEXT_WRAPPING, color=TEXT_COLOR,
+                               height=TEXT_HEIGHT, wrapWidth=TEXT_WRAP, color=TEXT_COLOR,
                                colorSpace='rgb', opacity=1, depth=-1.0
                               )
 fixation = visual.Circle(win, pos=[0, 0], radius=FIXATION_SIZE, lineColor=FIX_COLOR,
                          fillColor=FIX_COLOR
                         )
-simuli = []
+stimuli = []
 for target in xrange(6):
     stimuli.append(visual.Rect(win, width=STIM_SIZE, height=STIM_SIZE, fillColorSpace='rgb',
                                lineColorSpace='rgb'
@@ -289,38 +298,38 @@ for trial in test_set:
         instructions.setAutoDraw(False)
         fixation.setAutoDraw(True)
         win.flip()
-        eventClock.reset()
-        while eventClock.getTime < BREAK_TIME:
+        event_clock.reset()
+        while event_clock.getTime < BREAK_TIME:
             pass
 
     # Present ITI, just fixation
-    eventClock.reset()
-    while eventClock.getTime() < ITI:
+    event_clock.reset()
+    while event_clock.getTime() < ITI:
         pass
     
     # Present stimuli to screen
     for target in xrange(trial.num_stimuli):
         stimuli[target].setPos((trial.stim_positions[target][0], trial.stim_positions[target][1]))
-        stimuli[target].setFillColor(trial.stim_color[target])
-        stimuli[target].setLineColor(trial.stim_color[target])
+        stimuli[target].setFillColor(trial.stim_colors[target])
+        stimuli[target].setLineColor(trial.stim_colors[target])
         stimuli[target].setAutoDraw(True)
     win.flip()
-    eventClock.reset()
-    while eventClock.getTime() < STIM_TIME:
+    event_clock.reset()
+    while event_clock.getTime() < STIM_TIME:
         pass
 
     # Present memory delay
     for target in xrange(trial.num_stimuli):
         stimuli[target].setAutoDraw(False)
     win.flip()
-    eventClock.reset()
-    while eventClock.getTime() < DELAY_TIME:
+    event_clock.reset()
+    while event_clock.getTime() < DELAY_TIME:
         pass
 
     # Present probes to screen
     for target in xrange(trial.num_stimuli):
-        stimuli[target].setFillColor(trial.probe_color[target])
-        stimuli[target].setLineColor(trial.probe_color[target])
+        stimuli[target].setFillColor(trial.probe_colors[target])
+        stimuli[target].setLineColor(trial.probe_colors[target])
         stimuli[target].setPos((trial.stim_positions[target][0], trial.stim_positions[target][1]))
         stimuli[target].setAutoDraw(True)
     win.flip()
@@ -355,10 +364,10 @@ for trial in test_set:
     output = []
     output.append(subj_num)
     output.append(current_trial)
-    output.append(num_stimuli)
+    output.append(trial.num_stimuli)
     
     for target in xrange(trial.num_stimuli):
-        output.append(trial.stim_color[target])
+        output.append(COLOR_NAMES[str(trial.stim_colors[target])])
     
     if trial.num_stimuli < 6:
         output.append('NaN')
@@ -369,7 +378,7 @@ for trial in test_set:
         output.append('NaN')
     
     for target in xrange(trial.num_stimuli):
-        output.append(trial.probe_color[target])
+        output.append(COLOR_NAMES[str(trial.probe_colors[target])])
     
     if trial.num_stimuli < 6:
         output.append('NaN')
@@ -381,14 +390,14 @@ for trial in test_set:
         
     output.append(trial.change)
     output.append(response)
-    output.append(keyResp.rt)
+    output.append(key_resp.rt)
     
         
     writer.writerow(output)
     csv_file.flush()
     
     # Clear display at end of trial
-    for target in xrange(trial.num_stimulio):
+    for target in xrange(trial.num_stimuli):
         stimuli[target].setAutoDraw(False)
     win.flip()
 # end of experiment
