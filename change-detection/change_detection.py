@@ -6,7 +6,7 @@
 #
 # Created by Thomas Nelson <tn90ca@gmail.com>
 # Created on 2013-10-24
-# Modified by Thomas Nelson on 2015-01-24
+# Modified by Thomas Nelson on 2015-01-25
 #
 # This script was developed for use by the Visual Cognitive
 # Neuroscience Lab at Brock University.
@@ -24,8 +24,6 @@ import os
 import csv
 import math
 import time
-import Image
-import ctypes
 import random
 
 ###################################################################################################
@@ -107,7 +105,7 @@ class Trial(object):
         
         :param trial_num: The trial number used to determine the trial format.
         :param rep_num:   The rep number of this trial, used to determine color
-                          change.
+                           change.
         
         """
         
@@ -129,14 +127,11 @@ class Trial(object):
         ensure an even distribution of left and right positioning. Also
         generates the coordinates for the gui and results print out.
         
-        :param position_radius: The distance from the squares to the fixation
-                                 point.
-        :param num_positions:   The number of positions around the fixations
-                                 for the squares to appear.
+        :param positions: The list of possible positions for the stimuli
     
         """
     
-        random.seed(time.time()) # Initialize random number generator
+        random.seed()  # Initialize random number generator
 
         self.stim_positions = []
 
@@ -148,12 +143,13 @@ class Trial(object):
     # end def set_positions
 
     def set_colors(self):
-        """This function is used to randomly generate memory sample colours and
-        memory distraction colours based on a colour match or not.
+        """This function is used to randomly generate memory stimuli colours and
+        memory probe colours based on a colour match or not.
 
         """
 
-        random.seed(time.time()) #initialize random number generator
+        random.seed()  # Initialize random number generator
+
         self.stim_colors  = []
         self.probe_colors = []
         self.change       = False
@@ -166,7 +162,9 @@ class Trial(object):
         
         if (self.rep_num % 2) == 0:
             self.change = True
-            self.probe_colors[random.randint(0,self.num_stimuli-1)] = self.probe_colors[random.randint(self.num_stimuli,7)]
+            rand_1 = random.randint(0,self.num_stimuli-1)
+            rand_2 = random.randint(self.num_stimuli,7)
+            self.probe_colors[rand_1] = self.probe_colors[rand_2]
 
         self.stim_colors  = self.stim_colors[:self.num_stimuli]
         self.probe_colors = self.probe_colors[:self.num_stimuli]
@@ -189,7 +187,7 @@ def setup_subject():
         subj_dlg  = gui.DlgFromDict(dictionary=subj_info, title=EXP_NAME)
     
         if subj_dlg.OK == False:
-            core.quit(0) # If used hits cancel then safely close program
+            core.quit(0)  # If used hits cancel then safely close program
     
         if subj_info['Subject Number'].isdigit():
             subj_file  = SAVE_PATH + EXP_NAME + '_' + subj_info['Subject Number'] + '.csv'
@@ -293,7 +291,7 @@ for trial in test_set:
     current_trial += 1
 
     # Present a break message every 25 trials
-    if current_trial % 25 == 0 and currentTrial != 0:
+    if current_trial % 25 == 0 and current_trial != 0:
         fixation.setAutoDraw(False)
         instructions.setText(BREAK_MSG)
         instructions.setAutoDraw(True)
