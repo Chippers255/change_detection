@@ -13,7 +13,10 @@ All documentation can be found [here]().
 
 ## Version Log
 
-### V-1.1 (Master)
+### V-1.2
+- Path and file creation now work cross platform
+
+### V-1.1
 - Code has been cleaned up
 - Improved runtime efficiency
 
