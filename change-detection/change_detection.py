@@ -6,7 +6,7 @@
 #
 # Created by Thomas Nelson <tn90ca@gmail.com>
 # Created on 2013-10-24
-# Modified by Thomas Nelson on 2015-01-25
+# Modified by Thomas Nelson on 2015-01-27
 #
 # This script was developed for use by the Visual Cognitive
 # Neuroscience Lab at Brock University.
@@ -20,6 +20,7 @@ starting point for creating your own change detection experiments.
 
 from psychopy import visual, core, data, event, logging, sound, gui, misc, monitors
 from psychopy.constants import *
+from os.path import expanduser
 import os
 import csv
 import math
@@ -31,7 +32,8 @@ import random
 ###################################################################################################
 EXP_NAME     = "change_detection" # The name of the experiment for save files
 MONITOR_NAME = "vcnlab"           # The name of the monitor set in PsychoPy
-SAVE_PATH    = 'C:\\Users\\vcnlab\\Desktop\\data\\change_detection\\'
+HOME_PATH    = expanduser("~")
+SAVE_PATH    = os.path.normpath(os.path.join(HOME_PATH,'Desktop','data',EXP_NAME))
 
 BG_COLOR     = [0, 0, 0]    # Set a background color, currently grey
 FIX_COLOR    = [-1, -1, -1] # Set the fixation color, currently black
@@ -190,7 +192,7 @@ def setup_subject():
             core.quit(0)  # If used hits cancel then safely close program
     
         if subj_info['Subject Number'].isdigit():
-            subj_file  = SAVE_PATH + EXP_NAME + '_' + subj_info['Subject Number'] + '.csv'
+            subj_file  = os.path.join(SAVE_PATH,(EXP_NAME + '_' + subj_info['Subject Number'] + '.csv'))
     
             if int(subj_info['Subject Number']) == 999:
                 break
@@ -213,10 +215,14 @@ def setup_subject():
 ######################################## Experiment Setup #########################################
 ###################################################################################################
 # Seed random with time so each experiment is different
-random.seed(time.time())
+random.seed()
+
+# Create Save directory if it does not already exist
+if not os.path.exists(SAVE_PATH):
+    os.makedirs(SAVE_PATH)
 
 # Setup subject with number and save file
-subject = setup_subject()
+subject   = setup_subject()
 subj_file = subject['subj_file']
 subj_num  = subject['subj_num']
 
@@ -232,13 +238,12 @@ win         = visual.Window(fullscr=True, screen=0, allowGUI=False, allowStencil
 mon         = monitors.Monitor(MONITOR_NAME)
 event_clock = core.Clock()
 key_resp    = event.BuilderKeyResponse()
-error_tone  = sound.SoundPygame(500,0.05)
 
 # Setup all stimuli positiona
 positions = []
 for pos in xrange(NUM_STIM_POS):
     angle = math.radians(360 / NUM_STIM_POS * pos)
-    positions.append([math.cos(angle)*STIM_POS_RADIUS,math.sin(angle)*STIM_POS_RADIUS])
+    positions.append([math.cos(angle)*STIM_POS_RADIUS, math.sin(angle)*STIM_POS_RADIUS])
 
 # Build all trials before we start experiment
 test_set = []
@@ -264,8 +269,7 @@ stimuli = []
 for target in xrange(6):
     stimuli.append(visual.Rect(win, width=STIM_SIZE, height=STIM_SIZE, fillColorSpace='rgb',
                                lineColorSpace='rgb'
-                              )
-                  )
+                              ))
 
 # Present instructions for the experiment
 fixation.setAutoDraw(False)
