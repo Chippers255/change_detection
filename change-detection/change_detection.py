@@ -5,57 +5,58 @@
 # Brock University
 #
 # Created by Thomas Nelson <tn90ca@gmail.com>
-# Created on 2013-10-24
-# Modified by Thomas Nelson on 2015-01-27
+# Created..........................2013-10-24
+# Modified.........................2015-01-30
 #
 # This script was developed for use by the Visual Cognitive
 # Neuroscience Lab at Brock University.
 
-"""This script runs a standard color change detection task (modeled after Luck
-& Vogel, 1997, Nature). The script was written by Thomas Nelson for the Visual
-Cognitive Neuroscience Lab at Brock University. Feel free to use this as a
-starting point for creating your own change detection experiments.
+
+"""This script runs a standard colour change detection task (modeled after Luck & Vogel, 1997,
+Nature). The script was written by Thomas Nelson for the Visual Cognitive Neuroscience Lab at Brock
+University. Feel free to use this as a starting point for creating your own change detection
+experiments.
 
 """
 
-from psychopy import visual, core, data, event, logging, sound, gui, misc, monitors
+
+from psychopy import visual, core, data, event, gui, misc, monitors
 from psychopy.constants import *
-from os.path import expanduser
 import os
 import csv
 import math
-import time
 import random
+
 
 ###################################################################################################
 ######################################## Program Constants ########################################
 ###################################################################################################
 EXP_NAME     = "change_detection" # The name of the experiment for save files
 MONITOR_NAME = "vcnlab"           # The name of the monitor set in PsychoPy
-HOME_PATH    = expanduser("~")
-SAVE_PATH    = os.path.normpath(os.path.join(HOME_PATH,'Desktop','data',EXP_NAME))
+HOME_PATH    = os.path.expanduser("~")
+SAVE_PATH    = os.path.normpath(os.path.join(HOME_PATH, 'Desktop', 'data', EXP_NAME))
 
-BG_COLOR     = [0, 0, 0]    # Set a background color, currently grey
-FIX_COLOR    = [-1, -1, -1] # Set the fixation color, currently black
-TEXT_COLOR   = [1, 1, 1]    # The text color, currently white
-TRIAL_COLORS = [[-1,-1,-1], # Black
-                [-1,-1,1],  # Blue
-                [-1,1,-1],  # Green
-                [-1,1,1],   # Cyan
-                [1,-1,-1],  # Red
-                [1,-1,1],   # Purple
-                [1,1,-1],   # Yellow
-                [1,1,1]     # White
+BG_COLOUR     = [0, 0, 0]    # Set a background colour, currently grey
+FIX_COLOUR    = [-1, -1, -1] # Set the fixation colour, currently black
+TEXT_COLOUR   = [1, 1, 1]    # The text colour, currently white
+TRIAL_COLOURS = [[-1,-1,-1], # Black
+                [-1,-1,1],   # Blue
+                [-1,1,-1],   # Green
+                [-1,1,1],    # Cyan
+                [1,-1,-1],   # Red
+                [1,-1,1],    # Purple
+                [1,1,-1],    # Yellow
+                [1,1,1]      # White
                ]
-COLOR_NAMES  = {str([-1,-1,-1]):'Black',
-                str([-1,-1,1]):'Blue',
-                str([-1,1,-1]):'Green',
-                str([-1,1,1]):'Cyan',
-                str([1,-1,-1]):'Red',
-                str([1,-1,1]):'Purple',
-                str([1,1,-1]):'Yellow',
-                str([1,1,1]):'White'
-               }
+COLOUR_NAMES  = {str([-1,-1,-1]) : 'Black',
+                 str([-1,-1,1])  : 'Blue',
+                 str([-1,1,-1])  : 'Green',
+                 str([-1,1,1])   : 'Cyan',
+                 str([1,-1,-1])  : 'Red',
+                 str([1,-1,1])   : 'Purple',
+                 str([1,1,-1])   : 'Yellow',
+                 str([1,1,1])    : 'White'
+                }
 
 NUM_REPS = 50 # Number of reps for each trial type
 NUM_TYPE = 3  # Number of trial types, should be set to 3
@@ -83,10 +84,10 @@ INS_MSG  += "you are ready to begin."
 BREAK_MSG = "Take a quick break. When you are ready to continue, press any key."
 THANK_MSG = "Thank you for your participation. Please go find the experimenter."
 
-HEADER_LIST = ['Subject_Number', 'Trial_Number', 'Number_of_Stim', 'Stim_Color_1',
-               'Stim_Color_2', 'Stim_Color_3', 'Stim_Color_4', 'Stim_Color_5', 'Stim_Color_6',
-               'Probe_Color_1', 'Probe_Color_2', 'Probe_Color_3', 'Probe_Color_4',
-               'Probe_Color_5', 'Probe_Color_6', 'Change_Present', 'Subject_Response',
+HEADER_LIST = ['Subject_Number', 'Trial_Number', 'Number_of_Stim', 'Stim_Colour_1',
+               'Stim_Colour_2', 'Stim_Colour_3', 'Stim_Colour_4', 'Stim_Colour_5', 'Stim_Colour_6',
+               'Probe_Colour_1', 'Probe_Colour_2', 'Probe_Colour_3', 'Probe_Colour_4',
+               'Probe_Colour_5', 'Probe_Colour_6', 'Change_Present', 'Subject_Response',
                'Response_Time', 'Response_Error'
               ]
 
@@ -106,7 +107,7 @@ class Trial(object):
         colour and location.
         
         :param trial_num: The trial number used to determine the trial format.
-        :param rep_num:   The rep number of this trial, used to determine color
+        :param rep_num:   The rep number of this trial, used to determine colour
                            change.
         
         """
@@ -144,7 +145,7 @@ class Trial(object):
         self.stim_positions = self.stim_positions[:self.num_stimuli]
     # end def set_positions
 
-    def set_colors(self):
+    def set_colours(self):
         """This function is used to randomly generate memory stimuli colours and
         memory probe colours based on a colour match or not.
 
@@ -152,25 +153,25 @@ class Trial(object):
 
         random.seed()  # Initialize random number generator
 
-        self.stim_colors  = []
-        self.probe_colors = []
+        self.stim_colours  = []
+        self.probe_colours = []
         self.change       = False
 
-        random.shuffle(TRIAL_COLORS)
+        random.shuffle(TRIAL_COLOURS)
 
-        for color in TRIAL_COLORS:
-            self.stim_colors.append(color)
-            self.probe_colors.append(color)
+        for colour in TRIAL_COLOURS:
+            self.stim_colours.append(colour)
+            self.probe_colours.append(colour)
         
         if (self.rep_num % 2) == 0:
             self.change = True
             rand_1 = random.randint(0,self.num_stimuli-1)
             rand_2 = random.randint(self.num_stimuli,7)
-            self.probe_colors[rand_1] = self.probe_colors[rand_2]
+            self.probe_colours[rand_1] = self.probe_colours[rand_2]
 
-        self.stim_colors  = self.stim_colors[:self.num_stimuli]
-        self.probe_colors = self.probe_colors[:self.num_stimuli]
-    # end def set_colors
+        self.stim_colours  = self.stim_colours[:self.num_stimuli]
+        self.probe_colours = self.probe_colours[:self.num_stimuli]
+    # end def set_colours
 
 # end class Standard_Trial
 
@@ -197,7 +198,7 @@ def setup_subject():
             if int(subj_info['Subject Number']) == 999:
                 break
     
-            if not os.path.isfile(fileName):
+            if not os.path.isfile(subj_file):
                 break
             else:
                 subj_error.show()
@@ -232,10 +233,15 @@ with open(subj_file, 'w') as csv_file:
     writer.writerow(HEADER_LIST)
 
 # Setup all required PsychoPY variables
-win         = visual.Window(fullscr=True, screen=0, allowGUI=False, allowStencil=False,
-                            monitor=MONITOR_NAME, color=BG_COLOR, colorSpace='rgb', units='deg'
-                           )
-mon         = monitors.Monitor(MONITOR_NAME)
+try:
+    win = visual.Window(fullscr=True, screen=0, allowGUI=False, allowStencil=False,
+                        monitor=MONITOR_NAME, color=BACKGROUND_COLOUR, colorSpace='rgb', units='deg')
+    mon = monitors.Monitor(MONITOR_NAME)
+except:
+    obj_error = gui.Dlg(title="Error!")
+    obj_error.addText("You need to go into the monitor settings of psychopy and set up a monitor and name it.")
+    obj_error.show
+    core.quit(0)  # If used hits cancel then safely close program
 event_clock = core.Clock()
 key_resp    = event.BuilderKeyResponse()
 
@@ -252,23 +258,23 @@ for rep in xrange(NUM_REPS):
     for trial in xrange(NUM_TYPE):
         set_trial = Trial(trial, rep)
         set_trial.set_positions(positions)
-        set_trial.set_colors()
+        set_trial.set_colours()
         test_set.append(set_trial)
 
 random.shuffle(test_set) # Randomize our trial order
 
 # Build all experiment stimuli
 instructions = visual.TextStim(win=win, ori=0, name='text', text="", font='Arial', pos=[0, 0],
-                               height=TEXT_HEIGHT, wrapWidth=TEXT_WRAP, color=TEXT_COLOR,
-                               colorSpace='rgb', opacity=1, depth=-1.0
+                               height=TEXT_HEIGHT, wrapWidth=TEXT_WRAP, colour=TEXT_COLOUR,
+                               colourSpace='rgb', opacity=1, depth=-1.0
                               )
-fixation = visual.Circle(win, pos=[0, 0], radius=FIXATION_SIZE, lineColor=FIX_COLOR,
-                         fillColor=FIX_COLOR
+fixation = visual.Circle(win, pos=[0, 0], radius=FIXATION_SIZE, lineColour=FIX_COLOUR,
+                         fillColour=FIX_COLOUR
                         )
 stimuli = []
 for target in xrange(6):
-    stimuli.append(visual.Rect(win, width=STIM_SIZE, height=STIM_SIZE, fillColorSpace='rgb',
-                               lineColorSpace='rgb'
+    stimuli.append(visual.Rect(win, width=STIM_SIZE, height=STIM_SIZE, fillColourSpace='rgb',
+                               lineColourSpace='rgb'
                               ))
 
 # Present instructions for the experiment
@@ -285,12 +291,12 @@ win.flip()
 csv_file = open(subj_file, 'a')
 writer   = csv.writer(csv_file)
 
+# Set required run time variables
+current_trial = 0
 
 ###################################################################################################
 ####################################### Experiment Runtime ########################################
 ###################################################################################################
-current_trial = 0
-
 for trial in test_set:
     current_trial += 1
 
@@ -316,8 +322,8 @@ for trial in test_set:
     # Present stimuli to screen
     for target in xrange(trial.num_stimuli):
         stimuli[target].setPos((trial.stim_positions[target][0], trial.stim_positions[target][1]))
-        stimuli[target].setFillColor(trial.stim_colors[target])
-        stimuli[target].setLineColor(trial.stim_colors[target])
+        stimuli[target].setFillColour(trial.stim_colours[target])
+        stimuli[target].setLineColour(trial.stim_colours[target])
         stimuli[target].setAutoDraw(True)
     win.flip()
     event_clock.reset()
@@ -334,8 +340,8 @@ for trial in test_set:
 
     # Present probes to screen
     for target in xrange(trial.num_stimuli):
-        stimuli[target].setFillColor(trial.probe_colors[target])
-        stimuli[target].setLineColor(trial.probe_colors[target])
+        stimuli[target].setFillColour(trial.probe_colours[target])
+        stimuli[target].setLineColour(trial.probe_colours[target])
         stimuli[target].setPos((trial.stim_positions[target][0], trial.stim_positions[target][1]))
         stimuli[target].setAutoDraw(True)
     win.flip()
@@ -373,7 +379,7 @@ for trial in test_set:
     output.append(trial.num_stimuli)
     
     for target in xrange(trial.num_stimuli):
-        output.append(COLOR_NAMES[str(trial.stim_colors[target])])
+        output.append(COLOUR_NAMES[str(trial.stim_colours[target])])
     
     if trial.num_stimuli < 6:
         output.append('NaN')
@@ -384,7 +390,7 @@ for trial in test_set:
         output.append('NaN')
     
     for target in xrange(trial.num_stimuli):
-        output.append(COLOR_NAMES[str(trial.probe_colors[target])])
+        output.append(COLOUR_NAMES[str(trial.probe_colours[target])])
     
     if trial.num_stimuli < 6:
         output.append('NaN')
