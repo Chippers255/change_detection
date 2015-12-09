@@ -51,6 +51,15 @@ TRIAL_COLOURS = [[-1, -1, -1],  # Black
                  [1, -1, 1],    # Purple
                  [1, 1, -1],    # Yellow
                  [1, 1, 1]]     # White
+                 
+COLOUR_NAMES  = {str([-1,-1,-1]) : 'Black',
+                 str([-1,-1,1])  : 'Blue',
+                 str([-1,1,-1])  : 'Green',
+                 str([-1,1,1])   : 'Cyan',
+                 str([1,-1,-1])  : 'Red',
+                 str([1,-1,1])   : 'Purple',
+                 str([1,1,-1])   : 'Yellow',
+                 str([1,1,1])    : 'White'}
 
 NUM_TYPE = 3  # Number of different trial types
 NUM_REPS = 50  # Number of repetitions for each different trial type
