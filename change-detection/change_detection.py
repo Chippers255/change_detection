@@ -10,7 +10,7 @@
 # at Brock University.
 
 
-"""This script runs a standard colour change detection task (modeled after Luck & Vogel, 1997, Nature). The script
+"""This script runs a standard color change detection task (modeled after Luck & Vogel, 1997, Nature). The script
 was written by Thomas Nelson for the Visual Cognitive Neuroscience Lab at Brock University. Feel free to use this
 as a starting point for creating your own experiments.
 
@@ -22,16 +22,20 @@ import os
 import csv
 import math
 import random
-from psychopy import visual, core, event, gui, monitors, parallel
+from psychopy import visual, core, event, gui, monitors
 
 
 ########################################################################################################################
 #                                                  Program Constants                                                   #
 ########################################################################################################################
 
+# I have these settings configured for my macbook you will need to change them to suit your monitor
+MONITOR_WIDTH = 28.5  # The width of the display on your monitor
+MONITOR_DISTANCE = 52  # The veiwing distance from the user to the monitor
+MONITOR_RESOLUTION = [1440, 900]  # The resolution of your monitor display
+
 EXP_NAME = "change_detection"  # The name of the experiment for save files
-USE_EEG  = False  # Set a boolean value to tell the program to send EEG codes or not
-VERBOSE  = True  # Set to True to print out a trial timing log for testing
+VERBOSE  = False  # Set to True to print out a trial timing log for testing
 
 # Set file paths for required directories
 EXP_PATH   = os.path.dirname(os.path.realpath(__file__))  # The path to this script
@@ -40,10 +44,10 @@ SAVE_PATH  = os.path.join(HOME_PATH, 'Desktop', 'experiment_data', EXP_NAME)  # 
 IMAGE_PATH = os.path.join(EXP_PATH, 'images')  # Path to store any required experiment images
 
 # Note that these RGB values are converted from (0 and 255) to (-1 and 1)
-BG_COLOUR     = [0, 0, 0]  # Set a background colour, currently grey
-FIX_COLOUR    = [-1, -1, -1]  # Set the fixation colour, currently black
-TEXT_COLOUR   = [-1, -1, -1]  # The text colour, currently white
-TRIAL_COLOURS = [[-1, -1, -1],  # Black
+BG_color     = [0, 0, 0]  # Set a background color, currently grey
+FIX_color    = [-1, -1, -1]  # Set the fixation color, currently black
+TEXT_color   = [-1, -1, -1]  # The text color, currently white
+TRIAL_colorS = [[-1, -1, -1],  # Black
                  [-1, -1, 1],   # Blue
                  [-1, 1, -1],   # Green
                  [-1, 1, 1],    # Cyan
@@ -52,7 +56,7 @@ TRIAL_COLOURS = [[-1, -1, -1],  # Black
                  [1, 1, -1],    # Yellow
                  [1, 1, 1]]     # White
                  
-COLOUR_NAMES  = {str([-1,-1,-1]) : 'Black',
+color_NAMES  = {str([-1,-1,-1]) : 'Black',
                  str([-1,-1,1])  : 'Blue',
                  str([-1,1,-1])  : 'Green',
                  str([-1,1,1])   : 'Cyan',
@@ -79,19 +83,19 @@ STIM_TIME  = 0.5  # The time in seconds to display the stimuli
 DELAY_TIME = 1.0  # The time in seconds between stimuli and probe
 BREAK_TIME = 0.75  # The time in seconds between break end and trial start
 
-INS_MSG   = "You will be presented with coloured squares, try to remember their colours.\n\n"
+INS_MSG   = "You will be presented with colored squares, try to remember their colors.\n\n"
 INS_MSG  += "For each, trial there will follow a second set of squares in the same locations.\n\n"
-INS_MSG  += "If there was any change in colour to the second set of squares from the first, press "
-INS_MSG  += "the z key,\n\nIf they have not changed colour, press the m key\n\nPress any key when "
+INS_MSG  += "If there was any change in color to the second set of squares from the first, press "
+INS_MSG  += "the z key,\n\nIf they have not changed color, press the m key\n\nPress any key when "
 INS_MSG  += "you are ready to begin."
 BREAK_MSG = "Take a quick break. When you are ready to continue, press any key."
 THANK_MSG = "Thank you for your participation. Please go find the experimenter."
 
 # This is a list of the column headers for the output file
-HEADER_LIST = ['Subject_Number', 'Trial_Number', 'Number_of_Stim', 'Stim_Colour_1', 'Stim_Colour_2', 'Stim_Colour_3',
-               'Stim_Colour_4', 'Stim_Colour_5', 'Stim_Colour_6', 'Probe_Colour_1', 'Probe_Colour_2', 'Probe_Colour_3',
-               'Probe_Colour_4', 'Probe_Colour_5', 'Probe_Colour_6', 'Change_Present', 'Subject_Response',
-               'Response_Time', 'Response_Error']
+HEADER_LIST = ['Subject_Number', 'Trial_Number', 'Number_of_Stim', 'Stim_color_1', 'Stim_color_2', 'Stim_color_3',
+               'Stim_color_4', 'Stim_color_5', 'Stim_color_6', 'Probe_color_1', 'Probe_color_2', 'Probe_color_3',
+               'Probe_color_4', 'Probe_color_5', 'Probe_color_6', 'Change_Present', 'Subject_Response',
+               'Response_Time']
 
 
 ########################################################################################################################
@@ -111,7 +115,7 @@ class Trial(object):
         trial_num: Integer
             The trial number used to determine the trial format.
         rep_num: Integer
-            The rep number of this trial, used to determine colour change.
+            The rep number of this trial, used to determine color change.
 
         """
 
@@ -122,10 +126,8 @@ class Trial(object):
         self.stim_positions = []
 
         self.change        = False
-        self.stim_colours  = []
-        self.probe_colours = []
-        
-        self.signal = 0
+        self.stim_colors  = []
+        self.probe_colors = []
 
         # Determine the load number for this trial based on the trial type number
         if trial_num == 0:
@@ -153,38 +155,31 @@ class Trial(object):
         self.stim_positions = self.stim_positions[:self.num_stimuli]
     # end def set_positions
 
-    def set_colours(self):
-        """This function is used to randomly generate memory stimuli colours and memory probe colours based on a colour
+    def set_colors(self):
+        """This function is used to randomly generate memory stimuli colors and memory probe colors based on a color
         match or not.
 
         """
 
-        # Shuffle the list of available colours
-        random.shuffle(TRIAL_COLOURS)
+        # Shuffle the list of available colors
+        random.shuffle(TRIAL_colorS)
 
-        # Create the lists of stimuli and probe colours
-        for colour in TRIAL_COLOURS:
-            self.stim_colours.append(colour)
-            self.probe_colours.append(colour)
+        # Create the lists of stimuli and probe colors
+        for color in TRIAL_colorS:
+            self.stim_colors.append(color)
+            self.probe_colors.append(color)
 
-        # If a change is present replace on of the colours in the probe list with a new colour
+        # If a change is present replace on of the colors in the probe list with a new color
         if (self.rep_num % 2) == 0:
             self.change = True
             rand_1 = random.randint(0, self.num_stimuli-1)
             rand_2 = random.randint(self.num_stimuli, 7)
-            self.probe_colours[rand_1] = self.probe_colours[rand_2]
+            self.probe_colors[rand_1] = self.probe_colors[rand_2]
 
-        # Cut the colour lists to the correct number of stimuli required
-        self.stim_colours  = self.stim_colours[:self.num_stimuli]
-        self.probe_colours = self.probe_colours[:self.num_stimuli]
-    # end def set_colours
-    
-    def set_signals():
-        self.signal = 100 + (self.trial_num * 10)
-        
-        if self.change:
-            self.signal += 5
-    # end def set_signals
+        # Cut the color lists to the correct number of stimuli required
+        self.stim_colors  = self.stim_colors[:self.num_stimuli]
+        self.probe_colors = self.probe_colors[:self.num_stimuli]
+    # end def set_colors
 
 # end class Trial
 
@@ -242,11 +237,12 @@ def set_psychopy():
     
     # Build the monitor with correct sizing for psychopy to calculate visual degrees
     mon = monitors.Monitor('testMonitor')
-    mon.setDistance(57)  # Measure first to ensure this is correct
-    mon.setWidth(41)     # Measure first to ensure this is correct
+    mon.setDistance(MONITOR_DISTANCE)  # Measure first to ensure this is correct
+    mon.setWidth(MONITOR_WIDTH)  # Measure first to ensure this is correct
+    mon.setSizePix(MONITOR_RESOLUTION)
     
     # Build the window for psychopy to run the experiment in
-    win = visual.Window(fullscr=True, screen=0, allowGUI=False, allowStencil=False, monitor=mon, color=BG_COLOUR,
+    win = visual.Window(fullscr=True, screen=0, allowGUI=False, allowStencil=False, monitor=mon, color=BG_color,
                         colorSpace='rgb', units='deg')
     
     # Set up an event clock for timing in trials
@@ -254,15 +250,9 @@ def set_psychopy():
     
     # Set up an event catcher to collect keyboard and mouse responses
     mouse    = event.Mouse(win=win)
-    key_resp = event.BuilderKeyResponse()                                          )
-    
-    if USE_EEG:
-        parallel.setPortAddress(address=0x378)
-        port = parallel.ParallelPort()
-    else:
-        port = None
+    key_resp = event.BuilderKeyResponse()
 
-    return win, mon, event_clock, key_resp, mouse, port
+    return win, mon, event_clock, key_resp, mouse
 # End def set_psychopy
 
 
@@ -278,8 +268,7 @@ def set_trials():
         for trial in xrange(NUM_TYPE):
             set_trial = Trial(trial, rep)  # Initialize the Trial
             set_trial.set_positions()  # Set the stimuli positions for the Trial
-            set_trial.set_colours()  # Set the stimuli colours for the Trial
-            set_trial.set_signals()  # Set the EEG signals for the Trial
+            set_trial.set_colors()  # Set the stimuli colors for the Trial
             test_set.append(set_trial)
             
     # Randomize our trial order
@@ -306,9 +295,6 @@ def display_message(win, fix, txt, msg):
 
     """
     
-    if USE_EEG:
-        win.callOnFlip(parallel.setData, 200)
-        
     txt.setText(msg)
     fix.setAutoDraw(False)
     txt.setAutoDraw(True)
@@ -316,9 +302,6 @@ def display_message(win, fix, txt, msg):
     
     event.waitKeys()
     
-    if USE_EEG:
-        win.callOnFlip(parallel.setData, 0)
-        
     txt.setAutoDraw(False)
     fix.setAutoDraw(True)
     win.flip()
@@ -345,7 +328,7 @@ def display_fixation(win, clk, fix, dur):
     while True:
         if clk.getTime() >= dur:
             break
-        fix.Draw(True)
+        fix.draw(True)
         win.flip()
         if clk.getTime() >= dur:
             break
@@ -364,8 +347,6 @@ def display_fixation(win, clk, fix, dur):
 # Kill the explorer if we are on a windows machine, if not kill EEG use
 if os.name == 'nt':
     os.system("taskkill /im explorer.exe")
-else:
-    USE_EEG = False
 
 # Collect the subject number and create the subject output file
 subj_num, subj_file = setup_subject()
@@ -383,23 +364,23 @@ with open(subj_file, 'w') as csv_file:
     writer.writerow(HEADER_LIST)
 
 # Set up psychopy
-win, mon, event_clock, key_resp, mouse, port = set_psychopy()
+win, mon, event_clock, key_resp, mouse = set_psychopy()
 
 # Set the experiment trials
 test_set = set_trials()
 
 # Build all experiment stimuli, *Note this needs to be done before experiment runtime to ensure proper timing
 display_text = visual.TextStim(win=win, ori=0, name='text', text="", font='Arial', pos=[0, 0], height=TEXT_HEIGHT,
-                               wrapWidth=TEXT_WRAP, colour=TEXT_COLOUR, colourSpace='rgb', opacity=1, depth=-1.0)
+                               wrapWidth=TEXT_WRAP, color=TEXT_color, colorSpace='rgb', opacity=1, depth=-1.0)
 
-fixation = visual.Circle(win, pos=[0, 0], radius=FIXATION_SIZE, lineColour=FIX_COLOUR, fillColour=FIX_COLOUR)
+fixation = visual.Circle(win, pos=[0, 0], radius=FIXATION_SIZE, lineColor=FIX_color, fillColor=FIX_color)
 
 stimuli = []
 for target in xrange(6):
-    stimuli.append(visual.Rect(win, width=STIM_SIZE, height=STIM_SIZE, fillColourSpace='rgb', lineColourSpace='rgb'))
+    stimuli.append(visual.Rect(win, width=STIM_SIZE, height=STIM_SIZE, fillColorSpace='rgb', lineColorSpace='rgb'))
 
 # Present instructions for the experiment
-message(win, fixation, display_text, INS_MSG)
+display_message(win, fixation, display_text, INS_MSG)
 
 # Open the output file reader for writing
 csv_file = open(subj_file, 'a')
@@ -419,46 +400,56 @@ for trial in test_set:
     if current_trial % 25 == 0 and current_trial != 0:
         display_message(win, fixation, display_text, BREAK_MSG)
 
-    # Present ITI
-    display_fixation(win, event_clock, fixation, ITI)
-
-    # Define stimuli with trial values for presentation
+    # Set up ITI screen
+    fixation.setAutoDraw(True)
+    
+    # Run ITI screen
+    event_clock.reset()
+    win.flip()
+    
+    # Set up presentation stimuli screen
     for target in xrange(trial.num_stimuli):
         stimuli[target].setPos((trial.stim_positions[target][0], trial.stim_positions[target][1]))
-        stimuli[target].setFillColour(trial.stim_colours[target])
-        stimuli[target].setLineColour(trial.stim_colours[target])
+        stimuli[target].setFillColor(trial.stim_colors[target])
+        stimuli[target].setLineColor(trial.stim_colors[target])
+        stimuli[target].setAutoDraw(True)
+        
+    # Wait until ITI screen is done
+    while event_clock.getTime() < ITI_TIME:
+        pass
     
-    # Present stimuli to the screen
+    # Run presentation stimuli screen
     event_clock.reset()
-    while True:
-        if event_clock.getTime() >= STIM_TIME:
-            break
-        for target in xrange(trial.num_stimuli):
-            stimuli[target].draw()
-        fixation.draw()
-        win.flip()
-        if event_clock.getTime() >= STIM_TIME:
-            break
-    ST = event_clock.getTime()
-    if VERBOSE:
-        print "STIMULI SCREEN:", ST
-
-    # Present memory delay, ISI
-    display_fixation(win, event_clock, fixation, DELAY_TIME)
-
-    # Present probes to screen
+    win.flip()
+    
+    # Set up ISI screen
     for target in xrange(trial.num_stimuli):
-        stimuli[target].setFillColour(trial.probe_colours[target])
-        stimuli[target].setLineColour(trial.probe_colours[target])
+        stimuli[target].setAutoDraw(False)
+    
+    # Wait until presentation stimuli screen is done
+    while event_clock.getTime() < STIM_TIME:
+        pass
+    
+    # Run ISI screen
+    event_clock.reset()
+    win.flip()
+    
+    # Set up memory probe screen
+    for target in xrange(trial.num_stimuli):
+        stimuli[target].setFillColor(trial.probe_colors[target])
+        stimuli[target].setLineColor(trial.probe_colors[target])
         stimuli[target].setPos((trial.stim_positions[target][0], trial.stim_positions[target][1]))
         stimuli[target].setAutoDraw(True)
-
-    # Wait for key response and record
-    win.callOnFlip(event_clock.reset)
     event.clearEvents()
+    
+    # Wait until ISI screen is done
+    while event_clock.getTime() < DELAY_TIME:
+        pass
+    
+    # Run memory probe screen, wait for key response, and record
     key_resp.clock.reset()
     win.flip()
-
+    
     while True:
         # Check for response keys or quit
         if event.getKeys(["z"]):
@@ -477,13 +468,13 @@ for trial in test_set:
 
     for target in xrange(6):
         try:
-            output.append(COLOUR_NAMES[str(trial.stim_colours[target])])
+            output.append(color_NAMES[str(trial.stim_colors[target])])
         except:
             output.append('NaN')
 
     for target in xrange(6):
         try:
-            output.append(COLOUR_NAMES[str(trial.probe_colours[target])])
+            output.append(color_NAMES[str(trial.probe_colors[target])])
         except:
             output.append('NaN')
 
@@ -491,6 +482,9 @@ for trial in test_set:
 
     writer.writerow(output)
     csv_file.flush()
+    
+    for target in xrange(trial.num_stimuli):
+        stimuli[target].setAutoDraw(False)
 # end of experiment
 
 # Close the csv file
